@@ -13,16 +13,21 @@ pub extern "C" fn _start() -> ! {
 
     Catalina_OS_in_Rust::init();
 
-    // invoke a breakpoint exception
-    x86_64::instructions::interrupts::int3();
+    fn stack_overflow() {
+        stack_overflow(); // 再帰呼び出しのために、リターンアドレスがプッシュされる
+    }
 
+    // スタックオーバーフローを起こす
+    stack_overflow();
+
+
+    // 前回同様
     #[cfg(test)]
     test_main();
 
     println!("It did not crash!");
     loop {}
 }
-
 /// This function is called on panic.
 #[cfg(not(test))]
 #[panic_handler]
